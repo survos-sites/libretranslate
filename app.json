@@ -1,0 +1,20 @@
+{
+  "name": "libretranslate",
+  "description": "Self-hosted LibreTranslate serving babel.survos.com -- the translation engine behind lingua",
+  "keywords": ["libretranslate", "translation", "argos"],
+  "website": "https://babel.survos.com",
+  "healthchecks": {
+    "web": [
+      {
+        "type": "startup",
+        "name": "LibreTranslate languages endpoint",
+        "path": "/languages",
+        "port": 5000,
+        "initialDelay": 60,
+        "attempts": 40,
+        "wait": 15,
+        "timeout": 10
+      }
+    ]
+  }
+}

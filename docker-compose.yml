@@ -1,0 +1,24 @@
+name: libretranslate
+
+# Local validation of the SAME image production deploys, so dev and prod can't
+# drift. Note the shared dev stack (~/sites/docker) does not run LibreTranslate;
+# local work normally points LIBRE_HOST at https://babel.survos.com.
+
+services:
+  libretranslate:
+    build: .
+    image: survos/libretranslate:local
+    container_name: survos_libretranslate
+    restart: unless-stopped
+    ports:
+      - "5001:5000"   # 5000 is taken by other things locally; 5001 avoids it
+    volumes:
+      # Model cache only (~8.7 GB). Disposable -- LibreTranslate re-downloads on
+      # first run if empty. Mounted so repeated local runs don't re-fetch.
+      - ${LT_STORAGE_ROOT:?Set LT_STORAGE_ROOT}/models:/home/libretranslate/.local
+    healthcheck:
+      test: ["CMD-SHELL", "./venv/bin/python scripts/healthcheck.py"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
